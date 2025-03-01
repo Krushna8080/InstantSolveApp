@@ -1,6 +1,7 @@
 # InstantSolve
 
 A powerful AI-powered question-answering application built with React Native and modern AI APIs.View in mobile dimensions for best experience.
+Demo-https://instant-solve-bvhott926-krushna8080s-projects.vercel.app 
 
 ## 🌟 Features
 
