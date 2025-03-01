@@ -6,20 +6,24 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "web-build",
-        "buildCommand": "npx expo install && npx expo export:web"
+        "buildCommand": "npx expo install && npx expo build:web"
       }
     }
   ],
   "routes": [
     {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/static/(.*)",
+      "src": "^/static/(.*)",
+      "headers": { "cache-control": "public, max-age=0, must-revalidate" },
       "dest": "/static/$1"
     },
     {
-      "src": "/(.*)",
+      "src": "^/(.+\\.[a-zA-Z]+)$",
+      "headers": { "cache-control": "public, max-age=0, must-revalidate" },
+      "dest": "/$1"
+    },
+    {
+      "src": "^/.*",
+      "headers": { "cache-control": "no-cache, no-store, must-revalidate" },
       "dest": "/index.html"
     }
   ]
