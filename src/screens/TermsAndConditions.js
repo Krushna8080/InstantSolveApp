@@ -1,0 +1,386 @@
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, Dimensions, Platform } from 'react-native';
+import { Modal, Text, Button, Checkbox, useTheme, IconButton } from 'react-native-paper';
+import { useTheme as useCustomTheme } from '../context/ThemeContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const { width: WINDOW_WIDTH } = Dimensions.get('window');
+const isSmallScreen = WINDOW_WIDTH < 768;
+
+const TERMS_ACCEPTED_KEY = '@terms_accepted';
+
+const TermsAndConditions = ({ visible, onAccept, onDismiss }) => {
+  const { colors } = useTheme();
+  const { theme } = useCustomTheme();
+  const [accepted, setAccepted] = useState(false);
+  const [hasAcceptedBefore, setHasAcceptedBefore] = useState(false);
+  const [showingReview, setShowingReview] = useState(false);
+
+  useEffect(() => {
+    if (visible) {
+      checkTermsAcceptance();
+    }
+  }, [visible]);
+
+  const checkTermsAcceptance = async () => {
+    try {
+      const value = await AsyncStorage.getItem(TERMS_ACCEPTED_KEY);
+      const hasAccepted = value === 'true';
+      setAccepted(hasAccepted);
+      setHasAcceptedBefore(hasAccepted);
+    } catch (error) {
+      console.error('Error checking terms acceptance:', error);
+    }
+  };
+
+  const handleAccept = async () => {
+    if (accepted) {
+      try {
+        await AsyncStorage.setItem(TERMS_ACCEPTED_KEY, 'true');
+        if (typeof onAccept === 'function') {
+          onAccept();
+        }
+      } catch (error) {
+        console.error('Error saving terms acceptance:', error);
+      }
+    }
+  };
+
+  const handleCheckboxToggle = async (newValue) => {
+    setAccepted(newValue);
+  };
+  const handleDismiss = () => {
+    if (typeof onDismiss === 'function') {
+      onDismiss();
+    }
+    setShowingReview(false); // Reset review state if applicable
+  };
+
+  const handleReview = () => {
+    setShowingReview(true);
+  };
+
+  const getThemedStyles = () => ({
+    modalContainer: {
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    },
+    modal: {
+      backgroundColor: theme === 'dark' ? '#1E293B' : '#fff',
+    },
+    title: {
+      color: theme === 'dark' ? '#FFFFFF' : colors.text,
+      borderBottomColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+    },
+    section: {
+      borderBottomColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+    },
+    text: {
+      color: theme === 'dark' ? '#E5E7EB' : colors.text,
+      opacity: theme === 'dark' ? 1 : 0.9,
+    },
+    footer: {
+      borderTopColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+      backgroundColor: theme === 'dark' ? '#1a1f2b' : '#fff',
+    },
+    dismissButton: {
+      borderColor: theme === 'dark' ? 'rgba(255,255,255,0.2)' : 'transparent',
+    },
+    acceptButton: {
+      backgroundColor: theme === 'dark' ? '#3B82F6' : colors.primary,
+    },
+    alreadyAcceptedMessage: {
+      color: theme === 'dark' ? '#9CA3AF' : colors.text,
+      textAlign: 'center',
+      marginBottom: 16,
+    },
+    inputText: {
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+    },
+  });
+
+  const themedStyles = getThemedStyles();
+
+  if (hasAcceptedBefore && !showingReview) {
+    return (
+      <Modal
+        visible={visible}
+        dismissable={true}
+        onDismiss={handleDismiss}
+        contentContainerStyle={[styles.modalContainer, themedStyles.modalContainer]}
+      >
+        <View style={[styles.modal, themedStyles.modal, { maxHeight: 'auto', padding: 24 }]}> 
+          <Text style={[styles.title, themedStyles.title]}>
+            Terms and Conditions
+          </Text>
+          <Text style={[styles.text, themedStyles.alreadyAcceptedMessage]}>
+            You have already accepted the Terms and Conditions.
+          </Text>
+          <View style={styles.buttonContainer}>
+            <Button
+              mode="contained"
+              onPress={handleReview}
+              style={[styles.button, styles.acceptButton, themedStyles.acceptButton]}
+              labelStyle={{ color: '#FFFFFF' }}
+            >
+              Review Terms
+            </Button>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
+  return (
+    <Modal
+      visible={visible}
+      dismissable={true}
+      onDismiss={handleDismiss}
+      contentContainerStyle={[styles.modalContainer, themedStyles.modalContainer]}
+    >
+      <View style={[styles.modal, themedStyles.modal]}>
+        <Text style={[styles.title, themedStyles.title]}>
+          Terms and Conditions
+        </Text>
+        <ScrollView 
+          style={styles.content}
+          showsVerticalScrollIndicator={true}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={[styles.section, themedStyles.section]}>
+            <Text style={[styles.sectionTitle, themedStyles.text]}>
+              1. AI-Generated Content Disclaimer
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • All responses are generated by artificial intelligence models
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • The AI can make mistakes, provide inaccurate information, or generate biased content
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • We do not verify, endorse, or guarantee the accuracy of AI-generated responses
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • Users must independently verify any information before relying on it
+            </Text>
+          </View>
+
+          <View style={[styles.section, themedStyles.section]}>
+            <Text style={[styles.sectionTitle, themedStyles.text]}>2. Liability Limitations</Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • We accept no responsibility for any damages arising from the use of our service
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • Users are solely responsible for how they use the AI-generated content
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • We are not liable for any misinformation, harmful content, or offensive responses
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • The service is provided "as is" without any warranties or guarantees
+            </Text>
+          </View>
+
+          <View style={[styles.section, themedStyles.section]}>
+            <Text style={[styles.sectionTitle, themedStyles.text]}>3. Prohibited Uses</Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • Users must not use the service for illegal, harmful, or malicious purposes
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • We are not responsible for any misuse of the AI models
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • Users bear full responsibility for their interactions with the AI
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • We reserve the right to terminate access for any violations
+            </Text>
+          </View>
+
+          <View style={[styles.section, themedStyles.section]}>
+            <Text style={[styles.sectionTitle, themedStyles.text]}>4. Content Ownership</Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • AI-generated content may not be original or unique
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • We make no claims about copyright or ownership of AI responses
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • Users are responsible for verifying rights to use generated content
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • We are not liable for any intellectual property disputes
+            </Text>
+          </View>
+
+          <View style={[styles.section, themedStyles.section]}>
+            <Text style={[styles.sectionTitle, themedStyles.text]}>5. No Professional Advice</Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • AI responses should not be considered professional advice
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • Do not rely on the service for medical, legal, or financial decisions
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • Consult qualified professionals for expert guidance
+            </Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              • We are not responsible for decisions made based on AI responses
+            </Text>
+          </View>
+
+          <View style={[styles.section, themedStyles.section]}>
+            <Text style={[styles.sectionTitle, themedStyles.text]}>6. Indemnification</Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              Users agree to indemnify and hold us harmless from any claims, damages, or losses arising from their use of the service, including but not limited to reliance on AI-generated content or misuse of the service.
+            </Text>
+          </View>
+
+          <View style={[styles.section, themedStyles.section, styles.lastSection]}>
+            <Text style={[styles.sectionTitle, themedStyles.text]}>7. Changes to Terms</Text>
+            <Text style={[styles.text, themedStyles.text]}>
+              We may update these terms at any time without notice. Continued use of the service constitutes acceptance of any changes.
+            </Text>
+          </View>
+        </ScrollView>
+        <View style={[styles.footer, themedStyles.footer]}>
+          {!hasAcceptedBefore && (
+            <View style={styles.checkboxContainer}>
+              <Checkbox
+                status={accepted ? 'checked' : 'unchecked'}
+                onPress={() => handleCheckboxToggle(!accepted)}
+                color={theme === 'dark' ? '#3B82F6' : colors.primary}
+              />
+              <Text style={[styles.checkboxLabel, themedStyles.text]}>
+                I have read and accept the terms and conditions
+              </Text>
+            </View>
+          )}
+          <View style={styles.buttonContainer}>
+            {hasAcceptedBefore && (
+              <Button
+                mode="outlined"
+                onPress={handleDismiss}
+                style={[styles.button, styles.dismissButton, themedStyles.dismissButton]}
+                labelStyle={{ color: theme === 'dark' ? '#FFFFFF' : colors.text }}
+              >
+                Close
+              </Button>
+            )}
+            {!hasAcceptedBefore && (
+              <Button
+                mode="contained"
+                onPress={handleAccept}
+                disabled={!accepted}
+                style={[
+                  styles.button,
+                  styles.acceptButton,
+                  themedStyles.acceptButton,
+                  { opacity: accepted ? 1 : 0.5 }
+                ]}
+                labelStyle={{ color: '#FFFFFF' }}
+              >
+                Accept & Continue
+              </Button>
+            )}
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: isSmallScreen ? 12 : 20,
+  },
+  modal: {
+    width: '100%',
+    maxWidth: isSmallScreen ? '100%' : 600,
+    maxHeight: isSmallScreen ? '90%' : '85%',
+    borderRadius: 12,
+    overflow: 'hidden',
+    ...Platform.select({
+      web: {
+        boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
+      },
+      default: {
+        elevation: 5,
+      },
+    }),
+  },
+  title: {
+    fontSize: isSmallScreen ? 20 : 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+    padding: isSmallScreen ? 12 : 16,
+    borderBottomWidth: 1,
+  },
+  content: {
+    flexGrow: 1,
+    maxHeight: isSmallScreen ? '65vh' : '60vh',
+    paddingHorizontal: isSmallScreen ? 12 : 16,
+  },
+  scrollContent: {
+    paddingTop: 8,
+    paddingBottom: 20,
+  },
+  section: {
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    paddingBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: isSmallScreen ? 16 : 18,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  text: {
+    fontSize: isSmallScreen ? 13 : 14,
+    lineHeight: isSmallScreen ? 18 : 20,
+    marginBottom: 8,
+  },
+  footer: {
+    padding: isSmallScreen ? 12 : 16,
+    borderTopWidth: 1,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  checkboxLabel: {
+    marginLeft: 8,
+    flex: 1,
+    fontSize: isSmallScreen ? 13 : 14,
+  },
+  buttonContainer: {
+    flexDirection: isSmallScreen ? 'column' : 'row',
+    justifyContent: 'flex-end',
+    gap: 8,
+  },
+  button: {
+    minWidth: isSmallScreen ? '100%' : 120,
+    marginVertical: isSmallScreen ? 4 : 0,
+  },
+  dismissButton: {
+    borderColor: 'transparent',
+  },
+  acceptButton: {
+    paddingVertical: 8,
+  },
+  lastSection: {
+    marginBottom: 40,
+    borderBottomWidth: 0,
+  },
+  alreadyAcceptedMessage: {
+    fontSize: 16,
+    marginVertical: 24,
+    textAlign: 'center',
+  },
+});
+
+export default TermsAndConditions;
