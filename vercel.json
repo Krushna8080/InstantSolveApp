@@ -5,14 +5,20 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "web-build"
+        "distDir": "web-build",
+        "buildCommand": "npx expo install && npx expo export"
       }
     }
   ],
   "routes": [
     {
+      "src": "/assets/(.*)",
+      "headers": { "cache-control": "s-maxage=31536000, immutable" },
+      "dest": "/assets/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "/index.html"
     }
   ],
   "env": {

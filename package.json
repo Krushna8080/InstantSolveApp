@@ -1,14 +1,14 @@
 {
-  "name": "instasolve",
+  "name": "instantsolve",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "expo build:web",
-    "vercel-build": "expo build:web",
+    "build": "npx expo export",
+    "vercel-build": "npx expo export",
     "deploy": "vercel deploy --prod"
   },
   "dependencies": {
@@ -39,8 +39,7 @@
     "react-native-web": "~0.19.13"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@vercel/static-build": "^2.7.2"
+    "@babel/core": "^7.20.0"
   },
   "private": true
 }
