@@ -1,6 +1,6 @@
 # InstantSolve
 
-A powerful AI-powered question-answering application built with React Native and modern AI APIs.
+A powerful AI-powered question-answering application built with React Native and modern AI APIs.View in mobile dimensions for best experience.
 
 ## 🌟 Features
 
