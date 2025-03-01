@@ -5,8 +5,8 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "web-build",
-        "buildCommand": "npx expo install && npx expo export"
+        "distDir": "dist",
+        "buildCommand": "npx expo install && npx expo export:web"
       }
     }
   ],
