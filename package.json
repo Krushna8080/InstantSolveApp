@@ -7,7 +7,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "vercel-build": "npx expo export --platform web"
+    "vercel-build": "GENERATE_SOURCEMAP=false npx expo export --platform web --web"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
