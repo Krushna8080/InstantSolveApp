@@ -39,7 +39,8 @@
     "react-native-web": "~0.19.13"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@vercel/static-build": "^2.7.2"
   },
   "private": true
 }
