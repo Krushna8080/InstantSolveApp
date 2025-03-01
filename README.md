@@ -23,9 +23,24 @@ Demo-https://instant-solve-bvhott926-krushna8080s-projects.vercel.app
   - Responsive design for all devices
   - Smooth animations and transitions
 
-## 🚀 Live Demo
+## 📸 Screenshots
 
-Try InstantSolve: [https://instantsolve-app.com](https://instantsolve-app.com)
+### Light Mode
+![Light Mode](./assets/screenshots/1.png)
+*InstantSolve in Light Mode showing different answer modes*
+
+### Dark Mode
+![Dark Mode](./assets/screenshots/2.png)
+*InstantSolve in Dark Mode with the same functionality*
+
+### Mobile Views
+![Mobile View 1](./assets/screenshots/3.png)
+*InstantSolve optimized for mobile devices - Light theme*
+
+![Mobile View 2](./assets/screenshots/4.png)
+*InstantSolve optimized for mobile devices - Dark theme*
+
+## 🚀 Live Demo
 
 ## 🛠️ Installation
 
