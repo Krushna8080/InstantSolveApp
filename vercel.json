@@ -5,24 +5,27 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "web-build",
-        "buildCommand": "npx expo install && npx expo build:web"
+        "distDir": "dist",
+        "buildCommand": "npx expo install && EXPO_PLATFORM=web npx expo export"
       }
     }
   ],
   "routes": [
     {
-      "src": "^/static/(.*)",
-      "headers": { "cache-control": "public, max-age=0, must-revalidate" },
-      "dest": "/static/$1"
+      "src": "/assets/(.*)",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" },
+      "dest": "/assets/$1"
     },
     {
-      "src": "^/(.+\\.[a-zA-Z]+)$",
-      "headers": { "cache-control": "public, max-age=0, must-revalidate" },
+      "src": "/(.*\\.[a-z0-9]+$)",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" },
       "dest": "/$1"
     },
     {
-      "src": "^/.*",
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
       "headers": { "cache-control": "no-cache, no-store, must-revalidate" },
       "dest": "/index.html"
     }
