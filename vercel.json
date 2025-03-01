@@ -5,23 +5,35 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist",
+        "distDir": "web-build",
         "buildCommand": "npx expo install && npx expo export --platform web"
       }
     }
   ],
   "routes": [
     {
-      "handle": "filesystem"
+      "src": "^/static/(.*)",
+      "dest": "/static/$1"
     },
     {
-      "src": "/assets/(.*)",
-      "headers": { "cache-control": "s-maxage=31536000, immutable" },
-      "dest": "/assets/$1"
+      "src": "^/favicon.ico",
+      "dest": "/favicon.ico"
     },
     {
-      "src": "/(.*)",
-      "dest": "/"
+      "src": "^/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "^/serve.json",
+      "dest": "/serve.json"
+    },
+    {
+      "src": "^/asset-manifest.json",
+      "dest": "/asset-manifest.json"
+    },
+    {
+      "src": ".*",
+      "dest": "/index.html"
     }
   ],
   "env": {
